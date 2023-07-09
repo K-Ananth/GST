@@ -1,5 +1,7 @@
 [app]
 
+ccache = False
+
 # (str) Title of your application
 title = QuickGST
 
