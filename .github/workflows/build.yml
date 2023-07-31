@@ -48,7 +48,8 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
         with:
-          sdk-platform: 29
+           sdk-platform: "platforms;android-29"  # Replace with the Android SDK version you need
+           build-tools: "29.0.3"  # Replace with the specific version of build tools that includes AIDL
 
       # Install AIDL
       - name: Install AIDL
