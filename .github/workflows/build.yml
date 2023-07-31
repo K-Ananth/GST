@@ -15,6 +15,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+              sdk-platform: 'platforms;android-30'
+              ndk-version: '21.4.7075529'
 
       # Install Cython and AIDL
       - name: Install Cython and AIDL
