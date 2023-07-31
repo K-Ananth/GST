@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build:
@@ -42,6 +42,7 @@ jobs:
           sudo apt-get install -y ant
           sudo apt-get install -y rsync
           pip install pyinstaller  # Install PyInstaller
+          pip install cython      # Install Cython
 
       # This step sets the ANDROID_HOME environment variable
       - name: Set up Android SDK
