@@ -44,7 +44,7 @@ jobs:
           pip install pyinstaller  # Install PyInstaller
           pip install cython      # Install Cython
 
-      # This step sets the ANDROID_HOME environment variable
+      # Set up Android SDK
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
         with:
