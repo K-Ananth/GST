@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -49,6 +49,11 @@ jobs:
         uses: android-actions/setup-android@v2
         with:
           sdk-platform: 29
+
+      # Install AIDL
+      - name: Install AIDL
+        run: |
+          sdkmanager "build-tools;29.0.3"
 
       # Build the Android app using Buildozer
       - name: Build with Buildozer
