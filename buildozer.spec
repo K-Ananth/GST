@@ -13,6 +13,8 @@ android.minapi = 21
 android.arch = arm64-v8a
 android.permissions = INTERNET
 android.copy_libs = 1
+android.archs = armeabi-v7a
+
 
 [buildozer]
 log_level = 2
