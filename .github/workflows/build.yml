@@ -10,33 +10,52 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
+      # Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      # Install Buildozer and required dependencies
+      - name: Install Buildozer and dependencies
         run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-        shell: bash
-
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v2
+          pip install buildozer
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk
+          sudo apt-get install -y autoconf
+          sudo apt-get install -y libtool
+          sudo apt-get install -y automake
+          sudo apt-get install -y cmake
+          sudo apt-get install -y pkg-config
+          sudo apt-get install -y libpng-dev
+          sudo apt-get install -y zlib1g-dev
+          sudo apt-get install -y libjpeg-dev
+          sudo apt-get install -y ttf-dejavu-core
+          sudo apt-get install -y python3-setuptools
+          sudo apt-get install -y python3-ply
+          sudo apt-get install -y python3-yaml
+          sudo apt-get install -y python3-docutils
+          sudo apt-get install -y python3-six
+          sudo apt-get install -y python3-pillow
+          sudo apt-get install -y python3-pip
+          sudo apt-get install -y python3-cx-freeze
+          sudo apt-get install -y unzip
+          sudo apt-get install -y ant
+          sudo apt-get install -y rsync
+      # This step sets the ANDROID_HOME environment variable
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
         with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
+          sdk-platform: 29
 
-      - uses: actions/cache@v2
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
-
+      # Build the Android app using Buildozer
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: master
+        run: |
+          buildozer android debug
 
-      - name: Upload artifacts
+      # Upload the APK as an artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: ./bin/*.apk
