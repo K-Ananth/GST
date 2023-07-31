@@ -8,6 +8,7 @@ source.include_patterns = assets/*,images/*,fonts/*
 version = 1.0.0
 requirements = python3==3.10.9,kivy==2.0.0,kivymd==1.1.1,pil
 orientation = portrait
+android.sdk_build_tools = 29.0.3
 android.api = 31
 android.minapi = 21
 android.arch = arm64-v8a
