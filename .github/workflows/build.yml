@@ -10,60 +10,48 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Set up Python environment
+      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: 3.8
 
-      # Install Buildozer and required dependencies
-      - name: Install Buildozer and dependencies
+      # Install Cython and AIDL
+      - name: Install Cython and AIDL
         run: |
-          pip install buildozer
+          pip install cython
           sudo apt-get update
-          sudo apt-get install -y openjdk-8-jdk
-          sudo apt-get install -y autoconf
-          sudo apt-get install -y libtool
-          sudo apt-get install -y automake
-          sudo apt-get install -y cmake
-          sudo apt-get install -y pkg-config
-          sudo apt-get install -y libpng-dev
-          sudo apt-get install -y zlib1g-dev
-          sudo apt-get install -y libjpeg-dev
-          sudo apt-get install -y fonts-dejavu
-          sudo apt-get install -y python3-setuptools
-          sudo apt-get install -y python3-ply
-          sudo apt-get install -y python3-yaml
-          sudo apt-get install -y python3-docutils
-          sudo apt-get install -y python3-six
-          sudo apt-get install -y python3-pillow
-          sudo apt-get install -y python3-pip
-          sudo apt-get install -y unzip
-          sudo apt-get install -y ant
-          sudo apt-get install -y rsync
-          pip install pyinstaller  # Install PyInstaller
-          pip install cython      # Install Cython
+          sudo apt-get install -y aidl
 
-      # Set up Android SDK
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+      # Used to cache dependencies with a timeout
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u '+%Y%m%d')"
+        shell: bash
+
+      - name: Cache Buildozer global directory
+        uses: actions/cache@v2
         with:
-           sdk-platform: "platforms;android-29"  # Replace with the Android SDK version you need
-           build-tools: "29.0.3"  # Replace with the specific version of build tools that includes AIDL
+          path: .buildozer_global
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
 
-      # Install AIDL
-      - name: Install AIDL
-        run: |
-          sdkmanager "build-tools;29.0.3"
+      - uses: actions/cache@v2
+        with:
+          path: .buildozer
+          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
-      # Build the Android app using Buildozer
+      # Build with Buildozer
       - name: Build with Buildozer
-        run: |
-          buildozer android debug
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: master
 
-      # Upload the APK as an artifact
-      - name: Upload APK
+      # Upload artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: package
-          path: ./bin/*.apk
+          path: ${{ steps.buildozer.outputs.filename }}
