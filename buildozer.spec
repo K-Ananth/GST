@@ -93,3 +93,7 @@ android.private_storage = True
 
 # (bool) Copy library instead of making a libpymodules.so
 # android.copy_libs = 1
+
+[buildozer]
+log_level = 2
+warn_on_root = 1
